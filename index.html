@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dr. LM Mankgele | Dentist · Ngaka ya Meno · Mokopane</title>
+  <meta name="description" content="Book dental appointments with Dr. LM Mankgele — professional dental care in Mokopane, Limpopo. HPCSA Registered. BDS (SMU)." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #F7FCFB; font-family: 'DM Sans', system-ui, sans-serif; }
+    body { display: flex; justify-content: center; }
+    #root { width: 100%; max-width: 1200px; min-height: 100vh; background: #fff; position: relative; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #E4F5F2; }
+    ::-webkit-scrollbar-thumb { background: #2ABFAB; border-radius: 3px; }
+    a { text-decoration: none; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+/* ─── Brand ─────────────────────────────────────────────────────────── */
+const B = {
+  primary:   "#0D5C4E",
+  secondary: "#1A8F7A",
+  teal:      "#2ABFAB",
+  light:     "#E4F5F2",
+  dark:      "#082F28",
+};
+
+/* ─── Data ───────────────────────────────────────────────────────────── */
+const SERVICES = [
+  { id:1,  name:"Consultation",           icon:"🦷", desc:"Comprehensive oral health examination and personalised treatment planning.", duration:"30 min",      price:"R350"       },
+  { id:2,  name:"Professional Cleaning",  icon:"✨", desc:"Deep scale & polish to remove plaque, tartar and surface stains.",         duration:"45 min",      price:"R550"       },
+  { id:3,  name:"Teeth Whitening",        icon:"⭐", desc:"Professional-grade whitening for a brighter, confident smile.",            duration:"60 min",      price:"R1 200"     },
+  { id:4,  name:"Tobacco Stain Removal",  icon:"🔬", desc:"Specialised treatment to remove stubborn tobacco and coffee stains.",      duration:"45 min",      price:"R600"       },
+  { id:5,  name:"Extraction",             icon:"⚕️", desc:"Safe and comfortable tooth removal with minimal discomfort.",              duration:"30 min",      price:"R800"       },
+  { id:6,  name:"Fillings / Patch",       icon:"🏥", desc:"Composite resin fillings that blend naturally with your teeth.",           duration:"45 min",      price:"R650"       },
+  { id:7,  name:"Gold / Silver Caps",     icon:"👑", desc:"Full & upper/lower gold or silver tooth caps — 2 for R1 400 (Special!).", duration:"60 min",      price:"R800 ea"    },
+  { id:8,  name:"Star",                   icon:"💫", desc:"Decorative dental star inlay — a unique cosmetic accent.",                 duration:"30 min",      price:"From R500"  },
+  { id:9,  name:"Gold Removal",           icon:"🔧", desc:"Safe and professional removal of existing gold or silver caps.",           duration:"30 min",      price:"R500"       },
+  { id:10, name:"Gold Re-cementation",    icon:"🔨", desc:"Re-cementing loose or existing gold/silver caps securely.",               duration:"30 min",      price:"R400"       },
+  { id:11, name:"Dentures (False Teeth)", icon:"😁", desc:"Custom-fitted full or partial dentures for a natural appearance.",         duration:"Multiple",    price:"From R4 500"},
+  { id:12, name:"Crowns & Bridges",       icon:"🏛️", desc:"Permanent restoration solutions for damaged or missing teeth.",           duration:"Multiple",    price:"From R3 500"},
+  { id:13, name:"Veneers",                icon:"💎", desc:"Thin porcelain shells for a flawless, confident smile.",                  duration:"2 visits",    price:"From R2 500"},
+  { id:14, name:"Endodontics",            icon:"🩺", desc:"Root canal therapy to save and restore infected teeth.",                  duration:"60–90 min",   price:"From R2 200"},
+  { id:15, name:"Braces",                 icon:"🔩", desc:"Traditional and modern orthodontic solutions for all ages.",              duration:"12–24 months",price:"From R8 000"},
+  { id:16, name:"Slimming Wires",         icon:"📎", desc:"Subtle cosmetic wire aligners — a discreet alternative to braces.",       duration:"Varies",      price:"On request" },
+];
+
+const TIMESLOTS = ["08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30","13:00","13:30","14:00","14:30","15:00","15:30","16:00"];
+
+const MFULL  = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const DAYS   = ["Su","Mo","Tu","We","Th","Fr","Sa"];
+
+const FAQS = [
+  { q:"Where are you located?",             a:"72 Ruiter Road, next to the Post Office, Mokopane, Limpopo. PO Box 863, Driekop, 1129." },
+  { q:"How do I book an appointment?",      a:"Tap 'Book Now' on the home screen, choose a service, pick a date and time, then confirm. You'll receive an SMS & email confirmation instantly." },
+  { q:"What are your operating hours?",     a:"Monday–Friday: 08:00–17:00 | Saturday: 08:00–13:00 | Closed Sundays & public holidays." },
+  { q:"Do you accept medical aid?",         a:"Yes! We accept most major medical aids. Please bring your medical aid card and details to your appointment." },
+  { q:"What is the Festive Special?",       a:"Get 2 Gold/Silver/Platinum caps for only R1 400! Limited offer — call 063 521 2593 to check availability." },
+  { q:"How do I cancel or reschedule?",     a:"Go to the 'Bookings' tab, find your appointment and tap Cancel or Reschedule. Please give at least 24 hours' notice." },
+  { q:"Do you treat children?",             a:"Absolutely! We welcome patients of all ages. We recommend a child's first visit around age 2–3." },
+  { q:"What if I'm in pain?",               a:"Call us immediately on 076 405 8326. We prioritise emergency cases as quickly as possible." },
+  { q:"What are your contact details?",     a:"Phone: 076 405 8326 | 063 521 2593. Email: lethabomankgele@gmail.com" },
+];
+
+/* ─── Global CSS injected once ──────────────────────────────────────── */
+const GLOBAL_CSS = `
+  .btn-primary {
+    background: linear-gradient(135deg, #0D5C4E, #1A8F7A);
+    color: #fff; border: none; border-radius: 50px;
+    padding: 11px 22px; font-family: 'DM Sans', sans-serif;
+    font-weight: 700; font-size: 13px; cursor: pointer;
+    letter-spacing: .3px; transition: opacity .2s;
+  }
+  .btn-primary:hover { opacity: .88; }
+  .btn-outline {
+    background: transparent; color: #0D5C4E;
+    border: 2px solid #0D5C4E; border-radius: 50px;
+    padding: 10px 20px; font-family: 'DM Sans', sans-serif;
+    font-weight: 700; font-size: 13px; cursor: pointer;
+    transition: all .2s;
+  }
+  .btn-outline:hover { background: #0D5C4E; color: #fff; }
+  .card {
+    background: #fff; border-radius: 16px;
+    box-shadow: 0 2px 14px rgba(0,0,0,.07);
+  }
+  .fade { animation: fd .35s ease; }
+  @keyframes fd { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  .slide { animation: sl .35s cubic-bezier(.22,1,.36,1); }
+  @keyframes sl { from { transform:translateY(60px); opacity:0; } to { transform:translateY(0); opacity:1; } }
+  input, select, textarea { font-family: 'DM Sans', sans-serif; }
+  input:focus, select:focus, textarea:focus { outline: 2px solid #2ABFAB !important; }
+  .pulse { animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.5;} }
+`;
+
+/* ─── Root App ──────────────────────────────────────────────────────── */
+function App() {
+  const [page,    setPage]    = useState("home");
+  const [user,    setUser]    = useState(null);
+  const [showAuth,setShowAuth]= useState(false);
+  const [authMode,setAuthMode]= useState("signin");
+  const [appts,   setAppts]   = useState([
+    { id:1, service:"Professional Cleaning", date:"2026-05-10", time:"09:00", status:"confirmed", ref:"MNK-042" }
+  ]);
+  const [showChat, setShowChat] = useState(false);
+  const [bStep,    setBStep]   = useState(1);
+  const [booking,  setBooking] = useState({ service:null, date:null, time:null });
+  const [toast,    setToast]   = useState(null);
+
+  const showT = (msg, type="ok") => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3500);
+  };
+
+  const doBook = (svc) => {
+    if (!user) { setShowAuth(true); setAuthMode("signin"); return; }
+    setBooking(b => ({ ...b, service: svc || b.service }));
+    setPage("book");
+    setBStep(svc ? 2 : 1);
+  };
+
+  const confirmBook = () => {
+    const ref = "MNK-" + Math.floor(Math.random() * 900 + 100);
+    setAppts(a => [...a, {
+      id: Date.now(), service: booking.service.name,
+      date: booking.date, time: booking.time,
+      status: "confirmed", ref
+    }]);
+    setBooking({ service:null, date:null, time:null });
+    setPage("appointments");
+    showT("✅ Appointment booked! Confirmation sent.");
+  };
+
+  const NAV = [
+    { id:"home",         label:"Home",     e:"🏠" },
+    { id:"services",     label:"Services", e:"🦷" },
+    { id:"appointments", label:"Bookings", e:"📅" },
+    { id:"profile",      label:"About",    e:"👨‍⚕️" },
+    { id:"find",         label:"Find Us",  e:"📍" },
+  ];
+
+  return (
+    <>
+      <style>{GLOBAL_CSS}</style>
+
+      {/* ── Toast ── */}
+      {toast && (
+        <div style={{ position:"fixed", top:14, left:"50%", transform:"translateX(-50%)",
+          background: B.primary, color:"#fff", padding:"10px 22px",
+          borderRadius:50, zIndex:9999, fontSize:13, fontWeight:700,
+          whiteSpace:"nowrap", boxShadow:"0 4px 20px rgba(0,0,0,.25)" }}
+          className="fade">
+          {toast.msg}
+        </div>
+      )}
+
+      {/* ── Header ── */}
+      <div style={{ position:"sticky", top:0, zIndex:100, background:"#fff",
+        borderBottom:"1px solid #E4F5F2", padding:"10px 16px",
+        display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:10, cursor:"pointer" }}
+          onClick={() => setPage("home")}>
+          <div style={{ width:36, height:36, borderRadius:"50%",
+            background:`linear-gradient(135deg,${B.primary},${B.teal})`,
+            display:"flex", alignItems:"center", justifyContent:"center", fontSize:18 }}>🦷</div>
+          <div>
+            <div style={{ fontFamily:"'Playfair Display',serif", fontWeight:700,
+              fontSize:14, color:B.primary, lineHeight:1.1 }}>Dr. LM Mankgele</div>
+            <div style={{ fontSize:10, color:B.secondary, fontWeight:600 }}>Dentist · Ngaka ya Meno</div>
+          </div>
+        </div>
+        {user
+          ? <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+              <div style={{ width:32, height:32, borderRadius:"50%",
+                background:`linear-gradient(135deg,${B.teal},${B.secondary})`,
+                display:"flex", alignItems:"center", justifyContent:"center",
+                color:"#fff", fontWeight:700, fontSize:14 }}>{user.name[0]}</div>
+              <button onClick={() => { setUser(null); showT("Signed out 👋"); }}
+                style={{ background:"none", border:"none", color:B.secondary, cursor:"pointer", fontSize:12, fontWeight:600 }}>Sign out</button>
+            </div>
+          : <button className="btn-primary" style={{ padding:"7px 16px", fontSize:12 }}
+              onClick={() => { setShowAuth(true); setAuthMode("signin"); }}>Sign In</button>
+        }
+      </div>
+
+      {/* ── Pages ── */}
+      <div className="fade" key={page} style={{ paddingBottom:76, minHeight:"calc(100vh - 57px)" }}>
+        {page === "home"         && <HomePage         setPage={setPage} doBook={doBook} />}
+        {page === "services"     && <ServicesPage     doBook={doBook} />}
+        {page === "book"         && <BookPage         step={bStep} setStep={setBStep} booking={booking} setBooking={setBooking} onConfirm={confirmBook} user={user} />}
+        {page === "appointments" && <ApptsPage        appts={appts} setAppts={setAppts} doBook={doBook} showT={showT} />}
+        {page === "profile"      && <ProfilePage      />}
+        {page === "find"         && <FindPage         />}
+      </div>
+
+      {/* ── Bottom Nav ── */}
+      <div style={{ position:"fixed", bottom:0, left:"50%", transform:"translateX(-50%)",
+        width:"100%", maxWidth:1200, background:"#fff",
+        borderTop:"1px solid #E4F5F2", display:"flex", zIndex:100,
+        boxShadow:"0 -2px 14px rgba(0,0,0,.07)" }}>
+        {NAV.map(n => (
+          <button key={n.id} onClick={() => setPage(n.id)}
+            style={{ flex:1, padding:"8px 2px 6px", background:"none", border:"none",
+              cursor:"pointer", display:"flex", flexDirection:"column",
+              alignItems:"center", gap:3 }}>
+            <span style={{ fontSize:20 }}>{n.e}</span>
+            <span style={{ fontSize:9, fontWeight:700, color: page === n.id ? B.primary : "#9CB8B4" }}>{n.label}</span>
+            {page === n.id && <div style={{ width:18, height:2, borderRadius:2, background:B.teal }} />}
+          </button>
+        ))}
+      </div>
+
+      {/* ── Auth Modal ── */}
+      {showAuth && (
+        <AuthModal mode={authMode} setMode={setAuthMode}
+          onClose={() => setShowAuth(false)}
+          onAuth={u => { setUser(u); setShowAuth(false); showT(`Welcome, ${u.name.split(" ")[0]}! 👋`); }} />
+      )}
+
+      {/* ── Chatbot ── */}
+      <ChatWidget show={showChat} onToggle={() => setShowChat(p => !p)} />
+    </>
+  );
+}
+
+/* ─── Home ──────────────────────────────────────────────────────────── */
+function HomePage({ setPage, doBook }) {
+  return (
+    <div>
+      {/* Hero */}
+      <div style={{
+        backgroundImage:"linear-gradient(rgba(8,47,40,.58), rgba(8,47,40,.52)), url('smile.jpg')",
+        backgroundPosition:"center",
+        backgroundSize:"cover",
+        padding:"32px 20px 44px", position:"relative", overflow:"hidden"
+      }}>
+        <div style={{ fontSize:11, color:"rgba(255,255,255,.9)", marginBottom:6,
+          letterSpacing:2, fontWeight:700 }}>MOKOPANE · LIMPOPO</div>
+        <h1 style={{ fontFamily:"'Playfair Display',serif", fontSize:28, color:"#F8FFFD",
+          fontWeight:700, lineHeight:1.25, marginBottom:10 }}>
+          Your Healthy Smile<br/>Starts Here
+        </h1>
+        <p style={{ color:"rgba(248,255,253,.9)", fontSize:13, lineHeight:1.7,
+          marginBottom:22, maxWidth:270 }}>
+          Professional dental care by <strong>Dr. LM Mankgele</strong> BDS (SMU) — serving
+          Mokopane with compassion and expertise.
+        </p>
+        <div style={{ display:"flex", gap:10, marginBottom:24 }}>
+          <button className="btn-primary" style={{ background:"#F8FFFD", color:B.dark, boxShadow:"0 6px 16px rgba(0,0,0,.2)" }}
+            onClick={() => doBook(null)}>Book Now</button>
+          <button onClick={() => setPage("services")}
+            style={{ background:"rgba(248,255,253,.2)", border:"2px solid rgba(248,255,253,.65)",
+              color:"#F8FFFD", borderRadius:50, padding:"9px 18px",
+              fontSize:13, fontWeight:700, cursor:"pointer" }}>Services</button>
+        </div>
+        <div style={{ background:"rgba(8,47,40,.45)", borderRadius:14,
+          padding:"10px 14px", display:"flex", alignItems:"center", gap:12 }}>
+          <span style={{ fontSize:24 }}>🏅</span>
+          <div>
+            <div style={{ color:"#F8FFFD", fontWeight:700, fontSize:12 }}>HPCSA Registered</div>
+            <div style={{ color:"rgba(248,255,253,.82)", fontSize:11 }}>Practice No: 0955663 · HPCSA No: DP0114790</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats strip */}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:1, background:"#E4F5F2" }}>
+        {[["16+","Services"],["★ 4.9","Rating"],["HPCSA","Verified"]].map(([v,l]) => (
+          <div key={l} style={{ background:"#fff", padding:"14px 8px", textAlign:"center" }}>
+            <div style={{ fontFamily:"'Playfair Display',serif", fontSize:18,
+              fontWeight:700, color:B.primary }}>{v}</div>
+            <div style={{ fontSize:10, color:"#6B9490", fontWeight:600 }}>{l}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Festive Promo */}
+      <div style={{ margin:"14px 14px 10px" }}>
+        <div style={{ background:`linear-gradient(135deg,${B.dark},${B.primary})`,
+          borderRadius:18, padding:"18px 20px", position:"relative", overflow:"hidden" }}>
+          <div style={{ position:"absolute", top:-20, right:-20, width:90, height:90,
+            borderRadius:"50%", background:"rgba(42,191,171,.2)", pointerEvents:"none" }} />
+          <div style={{ fontSize:10, color:B.teal, fontWeight:700, letterSpacing:1.5, marginBottom:4 }}>
+            🔥 FESTIVE SPECIAL — LIMITED
+          </div>
+          <div style={{ fontFamily:"'Playfair Display',serif", color:"#fff", fontSize:22, fontWeight:700, marginBottom:2 }}>
+            2 Gold / Silver Caps
+          </div>
+          <div style={{ color:B.teal, fontSize:32, fontWeight:700, marginBottom:2 }}>R1,400</div>
+          <div style={{ color:"rgba(255,255,255,.6)", fontSize:11, marginBottom:16 }}>
+            Valid to 31 Jan 2026 · Limited slots available
+          </div>
+          <button style={{ background:B.teal, color:"#fff", border:"none", borderRadius:50,
+            padding:"9px 20px", fontWeight:700, fontSize:12, cursor:"pointer" }}
+            onClick={() => window.location.href = "tel:0635212593"}>
+            Claim Offer →
+          </button>
+        </div>
+      </div>
+
+      {/* Family Promo */}
+      <div style={{ margin:"0 14px 14px" }}>
+        <div style={{ background:`linear-gradient(135deg,${B.secondary},${B.teal})`,
+          borderRadius:18, padding:"16px 18px", display:"flex", alignItems:"center", gap:14 }}>
+          <span style={{ fontSize:40 }}>👨‍👩‍👧‍👦</span>
+          <div>
+            <div style={{ color:"rgba(255,255,255,.85)", fontSize:10, fontWeight:700, letterSpacing:1 }}>FAMILY DEAL</div>
+            <div style={{ fontFamily:"'Playfair Display',serif", color:"#fff", fontSize:16, fontWeight:700 }}>
+              Professional Clean for Family of 4
+            </div>
+            <div style={{ color:"rgba(255,255,255,.85)", fontSize:12 }}>+ FREE Teeth Whitening Kit included</div>
+            <div style={{ color:"rgba(255,255,255,.7)", fontSize:11, marginTop:4 }}>📞 Enquire: 063 521 2593</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Services preview */}
+      <div style={{ padding:"0 14px 10px" }}>
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+          <span style={{ fontFamily:"'Playfair Display',serif", fontSize:18, color:B.dark, fontWeight:700 }}>Our Services</span>
+          <button onClick={() => setPage("services")}
+            style={{ color:B.secondary, fontSize:12, fontWeight:700, background:"none", border:"none", cursor:"pointer" }}>
+            View all →
+          </button>
+        </div>
+        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+          {SERVICES.slice(0, 4).map(s => (
+            <div key={s.id} className="card" style={{ padding:14, cursor:"pointer" }}
+              onClick={() => setPage("services")}>
+              <div style={{ fontSize:26, marginBottom:6 }}>{s.icon}</div>
+              <div style={{ fontWeight:700, fontSize:13, color:B.dark, marginBottom:2 }}>{s.name}</div>
+              <div style={{ fontSize:11, color:"#6B9490" }}>{s.duration}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Testimonials */}
+      <div style={{ padding:"10px 14px 14px" }}>
+        <div style={{ fontFamily:"'Playfair Display',serif", fontSize:18, color:B.dark, fontWeight:700, marginBottom:12 }}>
+          Patient Stories
+        </div>
+        {[
+          { n:"Thabo M.",    t:"Dr. Mankgele is amazing — my extraction was completely painless. Very professional!", s:5 },
+          { n:"Precious N.", t:"The family cleaning deal is incredible value. My kids actually enjoyed coming to the dentist!", s:5 },
+          { n:"Lindiwe S.",  t:"I love my new veneers! The whole experience was smooth and the results are stunning.", s:5 },
+        ].map((r, i) => (
+          <div key={i} className="card" style={{ padding:14, marginBottom:10 }}>
+            <div style={{ display:"flex", gap:10, alignItems:"center", marginBottom:8 }}>
+              <div style={{ width:38, height:38, borderRadius:"50%",
+                background:`linear-gradient(135deg,${B.teal},${B.secondary})`,
+                display:"flex", alignItems:"center", justifyContent:"center",
+                color:"#fff", fontWeight:700, fontSize:15 }}>{r.n[0]}</div>
+              <div>
+                <div style={{ fontWeight:700, fontSize:13 }}>{r.n}</div>
+                <div style={{ color:"#F5A623", fontSize:13 }}>{"★".repeat(r.s)}</div>
+              </div>
+            </div>
+            <p style={{ fontSize:13, color:"#4A6B66", lineHeight:1.6, margin:0 }}>"{r.t}"</p>
+          </div>
+        ))}
+      </div>
+
+      {/* CTA */}
+      <div style={{ margin:"0 14px 24px",
+        background:`linear-gradient(135deg,${B.primary},${B.secondary})`,
+        borderRadius:18, padding:"26px 20px", textAlign:"center" }}>
+        <span style={{ fontSize:40 }}>😁</span>
+        <div style={{ fontFamily:"'Playfair Display',serif", color:"#fff",
+          fontSize:20, fontWeight:700, margin:"10px 0 6px" }}>Ready to Smile Confidently?</div>
+        <p style={{ color:"rgba(255,255,255,.8)", fontSize:13, marginBottom:18 }}>
+          Book your appointment in under 2 minutes — no waiting on hold.
+        </p>
+        <button className="btn-primary" style={{ background:"#fff", color:B.primary, width:"100%" }}
+          onClick={() => doBook(null)}>Book My Appointment</button>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Services ──────────────────────────────────────────────────────── */
+function ServicesPage({ doBook }) {
+  const [sel, setSel] = useState(null);
+  return (
+    <div style={{ padding:"18px 14px" }}>
+      <div style={{ fontFamily:"'Playfair Display',serif", fontSize:22, color:B.dark, fontWeight:700, marginBottom:4 }}>Our Services</div>
+      <div style={{ color:"#6B9490", fontSize:13, marginBottom:18 }}>Tap any service to view details and book.</div>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:10 }}>
+        {SERVICES.map(s => (
+          <div key={s.id} className="card" onClick={() => setSel(sel?.id === s.id ? null : s)}
+            style={{ padding:14, cursor:"pointer", transition:"all .2s",
+              border: sel?.id === s.id ? `2px solid ${B.teal}` : "2px solid transparent" }}>
+            <div style={{ fontSize:26, marginBottom:6 }}>{s.icon}</div>
+            <div style={{ fontWeight:700, fontSize:12, color:B.dark, marginBottom:3 }}>{s.name}</div>
+            <div style={{ fontSize:10, color:"#6B9490", marginBottom:4 }}>{s.duration}</div>
+            <div style={{ fontWeight:700, color:B.secondary, fontSize:11 }}>{s.price}</div>
+          </div>
+        ))}
+      </div>
+
+      {sel && (
+        <div className="card slide" style={{ position:"sticky", bottom:80,
+          padding:20, marginTop:14, boxShadow:"0 -4px 30px rgba(0,0,0,.12)" }}>
+          <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:10 }}>
+            <span style={{ fontSize:36 }}>{sel.icon}</span>
+            <button onClick={() => setSel(null)}
+              style={{ background:"#F0F0F0", border:"none", borderRadius:"50%",
+                width:30, height:30, cursor:"pointer", fontSize:18,
+                display:"flex", alignItems:"center", justifyContent:"center" }}>×</button>
+          </div>
+          <div style={{ fontFamily:"'Playfair Display',serif", fontSize:19, fontWeight:700, color:B.dark, marginBottom:6 }}>{sel.name}</div>
+          <div style={{ color:"#6B9490", fontSize:13, lineHeight:1.6, marginBottom:12 }}>{sel.desc}</div>
+          <div style={{ display:"flex", gap:8, marginBottom:16 }}>
+            <span style={{ background:B.light, color:B.primary, borderRadius:50, padding:"4px 12px", fontSize:11, fontWeight:700 }}>⏱ {sel.duration}</span>
+            <span style={{ background:B.light, color:B.primary, borderRadius:50, padding:"4px 12px", fontSize:11, fontWeight:700 }}>💰 {sel.price}</span>
+          </div>
+          <button className="btn-primary" style={{ width:"100%" }} onClick={() => doBook(sel)}>
+            Book {sel.name}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Booking wizard ─────────────────────────────────────────────────── */
+function BookPage({ step, setStep, booking, setBooking, onConfirm, user }) {
+  const today  = new Date();
+  const [yr,  setYr]  = useState(today.getFullYear());
+  const [mo,  setMo]  = useState(today.getMonth());
+
+  const dim = new Date(yr, mo + 1, 0).getDate();
+  const fd  = new Date(yr, mo, 1).getDay();
+
+  const isDisabled = d => {
+    const dt = new Date(yr, mo, d);
+    const todayMid = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    return dt < todayMid || dt.getDay() === 0;
+  };
+
+  const selDate = d => {
+    if (isDisabled(d)) return;
+    setBooking(b => ({ ...b,
+      date:`${yr}-${String(mo+1).padStart(2,"0")}-${String(d).padStart(2,"0")}` }));
+  };
+
+  const fmtDate = ds => ds
+    ? new Date(ds + "T12:00:00").toLocaleDateString("en-ZA",
+        { weekday:"long", day:"numeric", month:"long", year:"numeric" })
+    : "";
+
+  const STEPS = ["Service","Date & Time","Confirm"];
+
+  return (
+    <div style={{ padding:"18px 14px" }}>
+      {/* step indicator */}
+      <div style={{ display:"flex", alignItems:"center", marginBottom:22 }}>
+        {STEPS.map((s, i) => (
+          <div key={s} style={{ display:"flex", alignItems:"center", flex: i < STEPS.length - 1 ? 1 : "none" }}>
+            <div style={{ width:26, height:26, borderRadius:"50%",
+              background: step > i ? B.primary : step === i + 1 ? B.teal : "#E4F5F2",
+              color: step >= i + 1 ? "#fff" : "#9CB8B4",
+              display:"flex", alignItems:"center", justifyContent:"center",
+              fontSize:11, fontWeight:700, flexShrink:0 }}>
+              {step > i + 1 ? "✓" : i + 1}
+            </div>
+            {i < STEPS.length - 1 &&
+              <div style={{ flex:1, height:2,
+                background: step > i + 1 ? B.primary : "#E4F5F2", margin:"0 5px" }} />}
+          </div>
+        ))}
+      </div>
+
+      {/* Step 1 — Service */}
+      {step === 1 && (
+        <div>
+          <div style={{ fontFamily:"'Playfair Display',serif", fontSize:20, color:B.dark, fontWeight:700, marginBottom:14 }}>Choose a Service</div>
+          <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+            {SERVICES.map(s => (
+              <div key={s.id} className="card"
+                style={{ padding:"12px 14px", display:"flex", alignItems:"center", gap:12,
+                  cursor:"pointer", transition:"all .15s",
+                  border: booking.service?.id === s.id ? `2px solid ${B.teal}` : "2px solid transparent" }}
+                onClick={() => setBooking(b => ({ ...b, service:s }))}>
+                <span style={{ fontSize:22 }}>{s.icon}</span>
+                <div style={{ flex:1 }}>
+                  <div style={{ fontWeight:700, fontSize:13, color:B.dark }}>{s.name}</div>
+                  <div style={{ fontSize:11, color:"#6B9490" }}>{s.duration} · {s.price}</div>
+                </div>
+                {booking.service?.id === s.id && <span style={{ color:B.teal, fontSize:20 }}>✓</span>}
+              </div>
+            ))}
+          </div>
+          <button className="btn-primary" style={{ width:"100%", marginTop:18,
+            opacity: booking.service ? 1 : .45 }}
+            onClick={() => { if (booking.service) setStep(2); }}>Next →</button>
+        </div>
+      )}
+
+      {/* Step 2 — Date & Time */}
+      {step === 2 && (
+        <div>
+          <div style={{ fontFamily:"'Playfair Display',serif", fontSize:20, color:B.dark, fontWeight:700, marginBottom:14 }}>Pick Date & Time</div>
+          {/* Calendar */}
+          <div className="card" style={{ padding:14, marginBottom:14 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:10 }}>
+              <button onClick={() => { mo === 0 ? (setMo(11), setYr(y => y - 1)) : setMo(m => m - 1); }}
+                style={{ background:"none", border:"none", fontSize:20, cursor:"pointer", color:B.primary }}>‹</button>
+              <span style={{ fontWeight:700, fontSize:14, color:B.dark }}>{MFULL[mo]} {yr}</span>
+              <button onClick={() => { mo === 11 ? (setMo(0), setYr(y => y + 1)) : setMo(m => m + 1); }}
+                style={{ background:"none", border:"none", fontSize:20, cursor:"pointer", color:B.primary }}>›</button>
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:3, marginBottom:4 }}>
+              {DAYS.map(d => (
+                <div key={d} style={{ textAlign:"center", fontSize:10, fontWeight:700, color:"#9CB8B4", padding:"3px 0" }}>{d}</div>
+              ))}
+            </div>
+            <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:3 }}>
+              {Array(fd).fill(null).map((_, i) => <div key={`e${i}`} />)}
+              {Array(dim).fill(null).map((_, i) => {
+                const d   = i + 1;
+                const ds  = `${yr}-${String(mo+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+                const sel = booking.date === ds;
+                const dis = isDisabled(d);
+                return (
+                  <div key={d} onClick={() => selDate(d)}
+                    style={{ aspectRatio:"1", display:"flex", alignItems:"center", justifyContent:"center",
+                      borderRadius:"50%", fontSize:12, fontWeight: sel ? 700 : 400,
+                      cursor: dis ? "default" : "pointer",
+                      background: sel ? B.teal : "transparent",
+                      color: sel ? "#fff" : dis ? "#D0E8E4" : B.dark,
+                      transition:"all .15s" }}>
+                    {d}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Time slots */}
+          {booking.date && (
+            <div>
+              <div style={{ fontWeight:700, color:B.dark, marginBottom:10, fontSize:14 }}>Available Times</div>
+              <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:8 }}>
+                {TIMESLOTS.map(t => (
+                  <button key={t} onClick={() => setBooking(b => ({ ...b, time:t }))}
+                    style={{ padding:"9px", borderRadius:10,
+                      border: booking.time === t ? `2px solid ${B.teal}` : "2px solid #E4F5F2",
+                      background: booking.time === t ? B.light : "#fff",
+                      color: booking.time === t ? B.primary : "#4A6B66",
+                      fontWeight:700, fontSize:12, cursor:"pointer" }}>{t}</button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div style={{ display:"flex", gap:10, marginTop:18 }}>
+            <button className="btn-outline" onClick={() => setStep(1)}>← Back</button>
+            <button className="btn-primary" style={{ flex:1, opacity: booking.date && booking.time ? 1 : .45 }}
+              onClick={() => { if (booking.date && booking.time) setStep(3); }}>Next →</button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 3 — Confirm */}
+      {step === 3 && (
+        <div>
+          <div style={{ fontFamily:"'Playfair Display',serif", fontSize:20, color:B.dark, fontWeight:700, marginBottom:14 }}>Confirm Booking</div>
+          <div className="card" style={{ padding:18, marginBottom:12 }}>
+            <div style={{ fontSize:34, marginBottom:12 }}>{booking.service?.icon}</div>
+            {[
+              ["Service",  booking.service?.name],
+              ["Date",     fmtDate(booking.date)],
+              ["Time",     booking.time],
+              ["Duration", booking.service?.duration],
+              ["Price",    booking.service?.price],
+              ["Dentist",  "Dr. L.M. Mankgele"],
+            ].map(([l, v]) => (
+              <div key={l} style={{ display:"flex", justifyContent:"space-between",
+                padding:"7px 0", borderBottom:"1px solid #F0FAF8" }}>
+                <span style={{ color:"#6B9490", fontSize:12 }}>{l}</span>
+                <span style={{ fontWeight:700, fontSize:12, color:B.dark, textAlign:"right", maxWidth:200 }}>{v}</span>
+              </div>
+            ))}
+          </div>
+          {user && (
+            <div className="card" style={{ padding:14, marginBottom:12, background:B.light }}>
+              <div style={{ fontSize:11, color:B.secondary, fontWeight:700, marginBottom:6 }}>📧 Confirmation will be sent to:</div>
+              <div style={{ fontWeight:700, color:B.dark, fontSize:13 }}>{user.name}</div>
+              <div style={{ color:"#6B9490", fontSize:12 }}>{user.email} {user.phone && `· ${user.phone}`}</div>
+            </div>
+          )}
+          <div style={{ background:"#FFF8E7", borderRadius:12, padding:12,
+            marginBottom:16, fontSize:12, color:"#8B6914" }}>
+            ⚠️ Please arrive 10 minutes early. Cancellations need 24 hours' notice.
+          </div>
+          <div style={{ display:"flex", gap:10 }}>
+            <button className="btn-outline" onClick={() => setStep(2)}>← Back</button>
+            <button className="btn-primary" style={{ flex:1 }} onClick={onConfirm}>Confirm ✓</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── Appointments ──────────────────────────────────────────────────── */
+function ApptsPage({ appts, setAppts, doBook, showT }) {
+  const [tab, setTab] = useState("upcoming");
+  const now     = new Date();
+  const todayMs = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+  const upcoming = appts.filter(a => a.status !== "cancelled" && new Date(a.date + "T12:00:00").getTime() >= todayMs);
+  const past     = appts.filter(a => a.status === "cancelled"  || new Date(a.date + "T12:00:00").getTime()  < todayMs);
+  const shown    = tab === "upcoming" ? upcoming : past;
+
+  const cancel = id => { setAppts(p => p.map(x => x.id === id ? { ...x, status:"cancelled" } : x)); showT("Appointment cancelled."); };
+
+  return (
+    <div style={{ padding:"18px 14px" }}>
+      <div style={{ fontFamily:"'Playfair Display',serif", fontSize:22, color:B.dark, fontWeight:700, marginBottom:4 }}>My Appointments</div>
+      <div style={{ color:"#6B9490", fontSize:13, marginBottom:16 }}>Manage your dental bookings.</div>
+
+      <div style={{ display:"flex", background:"#F0FAF8", borderRadius:50, padding:3, marginBottom:16 }}>
+        {[["upcoming",`Upcoming (${upcoming.length})`],["past",`History (${past.length})`]].map(([t,l]) => (
+          <button key={t} onClick={() => setTab(t)}
+            style={{ flex:1, padding:"7px", borderRadius:50, border:"none",
+              background: tab === t ? "#fff" : "transparent",
+              color: tab === t ? B.primary : "#6B9490",
+              fontWeight:700, fontSize:12, cursor:"pointer",
+              boxShadow: tab === t ? "0 2px 8px rgba(0,0,0,.1)" : "none",
+              transition:"all .2s" }}>{l}</button>
+        ))}
+      </div>
+
+      {shown.length === 0
+        ? <div style={{ textAlign:"center", padding:"50px 20px" }}>
+            <div style={{ fontSize:50, marginBottom:12 }}>📅</div>
+            <div style={{ fontFamily:"'Playfair Display',serif", color:B.dark, fontSize:18, marginBottom:8 }}>No appointments yet</div>
+            <div style={{ color:"#6B9490", fontSize:13, marginBottom:20 }}>Book your first visit with Dr. Mankgele today.</div>
+            <button className="btn-primary" onClick={() => doBook(null)}>Book Appointment</button>
+          </div>
+        : <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+            {shown.map(a => (
+              <div key={a.id} className="card" style={{ padding:16 }}>
+                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:8 }}>
+                  <div>
+                    <div style={{ fontWeight:700, fontSize:14, color:B.dark }}>{a.service}</div>
+                    <div style={{ fontSize:11, color:"#6B9490", marginTop:2 }}>Ref: {a.ref}</div>
+                  </div>
+                  <span style={{ background: a.status === "confirmed" ? "#E4F5F2" : "#FFE8E8",
+                    color: a.status === "confirmed" ? B.primary : "#C0392B",
+                    borderRadius:50, padding:"3px 10px", fontSize:10, fontWeight:700 }}>
+                    {a.status === "confirmed" ? "✓ Confirmed" : "Cancelled"}
+                  </span>
+                </div>
+                <div style={{ display:"flex", gap:14, fontSize:12, color:"#4A6B66", marginBottom:10 }}>
+                  <span>📅 {new Date(a.date+"T12:00:00").toLocaleDateString("en-ZA",{day:"numeric",month:"short",year:"numeric"})}</span>
+                  <span>⏰ {a.time}</span>
+                </div>
+                <div style={{ fontSize:11, color:"#6B9490", marginBottom: a.status==="confirmed" ? 12 : 0 }}>
+                  Dr. L.M. Mankgele · 72 Ruiter Road, Mokopane
+                </div>
+                {a.status === "confirmed" && (
+                  <div style={{ display:"flex", gap:8 }}>
+                    <button onClick={() => cancel(a.id)}
+                      style={{ flex:1, padding:"7px", borderRadius:50,
+                        border:"2px solid #E8D0D0", background:"#fff",
+                        color:"#C0392B", fontWeight:700, fontSize:12, cursor:"pointer" }}>Cancel</button>
+                    <button onClick={() => doBook(null)}
+                      style={{ flex:1, padding:"7px", borderRadius:50,
+                        border:`2px solid ${B.teal}`, background:"#fff",
+                        color:B.secondary, fontWeight:700, fontSize:12, cursor:"pointer" }}>Reschedule</button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+      }
+    </div>
+  );
+}
+
+/* ─── Profile ───────────────────────────────────────────────────────── */
+function ProfilePage() {
+  return (
+    <div style={{ padding:"18px 14px" }}>
+      <div style={{ background:`linear-gradient(150deg,${B.dark},${B.primary})`,
+        borderRadius:20, padding:"26px 20px", marginBottom:16,
+        textAlign:"center", position:"relative", overflow:"hidden" }}>
+        <div style={{ position:"absolute", top:-30, right:-30, width:100, height:100,
+          borderRadius:"50%", background:"rgba(42,191,171,.2)", pointerEvents:"none" }} />
+        <div style={{ width:82, height:82, borderRadius:"50%",
+          background:`linear-gradient(135deg,${B.teal},${B.secondary})`,
+          margin:"0 auto 14px", display:"flex", alignItems:"center",
+          justifyContent:"center", fontSize:40,
+          border:"3px solid rgba(255,255,255,.3)" }}>👨‍⚕️</div>
+        <div style={{ fontFamily:"'Playfair Display',serif", color:"#fff",
+          fontSize:20, fontWeight:700, marginBottom:4 }}>Dr. L.M. Mankgele</div>
+        <div style={{ color:B.teal, fontWeight:700, fontSize:13, marginBottom:4 }}>
+          BDS (SMU) — Dentist / Ngaka ya Meno
+        </div>
+        <div style={{ color:"rgba(255,255,255,.7)", fontSize:11 }}>
+          HPCSA Registered · HPCSA No: DP0114790
+        </div>
+      </div>
+
+      <div className="card" style={{ padding:18, marginBottom:12 }}>
+        <div style={{ fontFamily:"'Playfair Display',serif", fontSize:16, color:B.dark, fontWeight:700, marginBottom:14 }}>Credentials</div>
+        {[
+          ["🎓 Qualification", "BDS — Bachelor of Dental Surgery, Sefako Makgatho Health Sciences University (SMU)"],
+          ["🏅 HPCSA No.",     "DP0114790"],
+          ["🏥 Practice No.",  "0955663"],
+          ["📍 Location",      "Mokopane, Limpopo, South Africa"],
+          ["🗣  Language",     "English · Sepedi (Sesotho sa Leboa)"],
+        ].map(([l, v]) => (
+          <div key={l} style={{ marginBottom:12 }}>
+            <div style={{ fontWeight:700, fontSize:12, color:B.primary, marginBottom:2 }}>{l}</div>
+            <div style={{ fontSize:12, color:"#4A6B66", lineHeight:1.5 }}>{v}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="card" style={{ padding:18, marginBottom:12 }}>
+        <div style={{ fontFamily:"'Playfair Display',serif", fontSize:16, color:B.dark, fontWeight:700, marginBottom:12 }}>Areas of Expertise</div>
+        <div style={{ display:"flex", flexWrap:"wrap", gap:8 }}>
+          {["Restorative","Orthodontics","Cosmetic","Oral Surgery","Endodontics","Prosthodontics","Preventive","Paediatric"].map(s => (
+            <span key={s} style={{ background:B.light, color:B.primary,
+              borderRadius:50, padding:"5px 12px", fontSize:11, fontWeight:700 }}>{s}</span>
+          ))}
+        </div>
+      </div>
+
+      <div className="card" style={{ padding:18, marginBottom:12 }}>
+        <div style={{ fontFamily:"'Playfair Display',serif", fontSize:16, color:B.dark, fontWeight:700, marginBottom:4 }}>About the Practice</div>
+        <p style={{ fontSize:13, color:"#4A6B66", lineHeight:1.7, marginTop:10 }}>
+          Dr. LM Mankgele is a dedicated dental professional serving the Mokopane community
+          with compassionate, patient-centred care. The practice offers a comprehensive range of
+          dental services — from routine check-ups to advanced restorative and cosmetic procedures.
+        </p>
+        <p style={{ fontSize:13, color:"#4A6B66", lineHeight:1.7, marginTop:10 }}>
+          Dr. Mankgele believes every patient deserves a healthy, confident smile and strives to
+          create a comfortable, welcoming environment for patients of all ages.
+        </p>
+      </div>
+
+      <div className="card" style={{ padding:18 }}>
+        <div style={{ fontFamily:"'Playfair Display',serif", fontSize:16, color:B.dark, fontWeight:700, marginBottom:12 }}>Contact Information</div>
+        {[
+          ["📞","076 405 8326",                "tel:0764058326"],
+          ["📞","063 521 2593",                "tel:0635212593"],
+          ["📧","lethabomankgele@gmail.com",   "mailto:lethabomankgele@gmail.com"],
+          ["📍","72 Ruiter Road, next to Post Office, Mokopane", null],
+        ].map(([ic, v, href]) => (
+          <div key={v} style={{ display:"flex", gap:10, alignItems:"center",
+            padding:"8px 0", borderBottom:"1px solid #F0FAF8" }}>
+            <span style={{ fontSize:16 }}>{ic}</span>
+            {href
+              ? <a href={href} style={{ fontSize:12, color:B.secondary, fontWeight:600 }}>{v}</a>
+              : <span style={{ fontSize:12, color:"#4A6B66" }}>{v}</span>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Find Us ───────────────────────────────────────────────────────── */
+function FindPage() {
+  return (
+    <div style={{ padding:"18px 14px" }}>
+      <div style={{ fontFamily:"'Playfair Display',serif", fontSize:22, color:B.dark, fontWeight:700, marginBottom:4 }}>Find Us</div>
+      <div style={{ color:"#6B9490", fontSize:13, marginBottom:16 }}>Conveniently located in Mokopane, Limpopo.</div>
+
+      <div style={{ borderRadius:16, overflow:"hidden", marginBottom:16, boxShadow:"0 4px 16px rgba(0,0,0,.1)" }}>
+        <iframe
+          title="Dr Mankgele — Mokopane"
+          width="100%" height="250" style={{ border:0, display:"block" }} loading="lazy"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d57538.3!2d29.0086!3d-24.1743!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1ec6b9c2e3cc3f27%3A0x37e8b4d3b3faebe3!2sMokopane%2C%20Limpopo!5e0!3m2!1sen!2sza!4v1"
+          allowFullScreen />
+      </div>
+
+      <div className="card" style={{ padding:18, marginBottom:12 }}>
+        <div style={{ fontSize:28, marginBottom:10 }}>📍</div>
+        <div style={{ fontFamily:"'Playfair Display',serif", fontSize:16, color:B.dark, fontWeight:700, marginBottom:8 }}>Practice Address</div>
+        <div style={{ color:"#4A6B66", fontSize:13, lineHeight:1.9 }}>
+          72 Ruiter Road<br/>
+          Next to the Post Office<br/>
+          Mokopane, Limpopo<br/>
+          PO Box 863, Driekop, 1129
+        </div>
+      </div>
+
+      <div className="card" style={{ padding:18, marginBottom:16 }}>
+        <div style={{ fontFamily:"'Playfair Display',serif", fontSize:16, color:B.dark, fontWeight:700, marginBottom:12 }}>⏰ Operating Hours</div>
+        {[
+          ["Monday – Friday",  "08:00 – 17:00", true ],
+          ["Saturday",         "08:00 – 13:00", true ],
+          ["Sunday",           "Closed",         false],
+          ["Public Holidays",  "Closed",         false],
+        ].map(([d, h, o]) => (
+          <div key={d} style={{ display:"flex", justifyContent:"space-between",
+            padding:"7px 0", borderBottom:"1px solid #F0FAF8" }}>
+            <span style={{ fontSize:12, color:"#4A6B66" }}>{d}</span>
+            <span style={{ fontSize:12, fontWeight:700, color: o ? B.primary : "#C0392B" }}>{h}</span>
+          </div>
+        ))}
+      </div>
+
+      <a href="https://maps.google.com/?q=72+Ruiter+Road+Mokopane+Limpopo" target="_blank" rel="noreferrer">
+        <button className="btn-primary" style={{ width:"100%", marginBottom:10 }}>Get Directions via Google Maps</button>
+      </a>
+      <a href="tel:0764058326">
+        <button className="btn-outline" style={{ width:"100%" }}>📞 Call: 076 405 8326</button>
+      </a>
+    </div>
+  );
+}
+
+/* ─── Auth Modal ────────────────────────────────────────────────────── */
+function AuthModal({ mode, setMode, onClose, onAuth }) {
+  const [form, setForm] = useState({ name:"", phone:"", email:"", pass:"" });
+  const [err,  setErr ] = useState({});
+
+  const validate = () => {
+    const e = {};
+    if (mode === "signup" && !form.name.trim()) e.name = "Full name is required";
+    if (mode === "signup" && !form.phone.trim()) e.phone = "Phone number is required";
+    if (!form.email.includes("@")) e.email = "Valid email address required";
+    if (form.pass.length < 6) e.pass = "Password must be at least 6 characters";
+    return e;
+  };
+
+  const submit = () => {
+    const e = validate();
+    if (Object.keys(e).length) { setErr(e); return; }
+    onAuth({ name: form.name || form.email.split("@")[0], email: form.email, phone: form.phone });
+  };
+
+  return (
+    <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.55)",
+      zIndex:500, display:"flex", alignItems:"flex-end", justifyContent:"center" }}
+      onClick={onClose}>
+      <div className="card slide" style={{ width:"100%", maxWidth:560,
+        borderRadius:"22px 22px 0 0", padding:"28px 20px" }}
+        onClick={e => e.stopPropagation()}>
+        <div style={{ textAlign:"center", marginBottom:20 }}>
+          <div style={{ fontSize:40, marginBottom:8 }}>🦷</div>
+          <div style={{ fontFamily:"'Playfair Display',serif", fontSize:20, color:B.dark, fontWeight:700 }}>
+            {mode === "signin" ? "Welcome Back" : "Create Account"}
+          </div>
+          <div style={{ color:"#6B9490", fontSize:13 }}>
+            {mode === "signin" ? "Sign in to manage your appointments" : "Join to book and manage appointments"}
+          </div>
+        </div>
+
+        {mode === "signup" && (
+          <>
+            <input placeholder="Full Name" value={form.name}
+              onChange={e => setForm(f => ({ ...f, name:e.target.value }))}
+              style={{ width:"100%", padding:"11px 14px", borderRadius:10, marginBottom:err.name?4:10,
+                border:`2px solid ${err.name?"#E74C3C":"#E4F5F2"}`, fontSize:13, outline:"none" }} />
+            {err.name && <div style={{ color:"#E74C3C", fontSize:11, marginBottom:8 }}>{err.name}</div>}
+
+            <input placeholder="Phone Number (e.g. 076 123 4567)" value={form.phone}
+              onChange={e => setForm(f => ({ ...f, phone:e.target.value }))}
+              style={{ width:"100%", padding:"11px 14px", borderRadius:10, marginBottom:err.phone?4:10,
+                border:`2px solid ${err.phone?"#E74C3C":"#E4F5F2"}`, fontSize:13, outline:"none" }} />
+            {err.phone && <div style={{ color:"#E74C3C", fontSize:11, marginBottom:8 }}>{err.phone}</div>}
+          </>
+        )}
+
+        <input placeholder="Email Address" value={form.email}
+          onChange={e => setForm(f => ({ ...f, email:e.target.value }))}
+          style={{ width:"100%", padding:"11px 14px", borderRadius:10, marginBottom:err.email?4:10,
+            border:`2px solid ${err.email?"#E74C3C":"#E4F5F2"}`, fontSize:13, outline:"none" }} />
+        {err.email && <div style={{ color:"#E74C3C", fontSize:11, marginBottom:8 }}>{err.email}</div>}
+
+        <input type="password" placeholder="Password" value={form.pass}
+          onChange={e => setForm(f => ({ ...f, pass:e.target.value }))}
+          style={{ width:"100%", padding:"11px 14px", borderRadius:10, marginBottom:err.pass?4:18,
+            border:`2px solid ${err.pass?"#E74C3C":"#E4F5F2"}`, fontSize:13, outline:"none" }} />
+        {err.pass && <div style={{ color:"#E74C3C", fontSize:11, marginBottom:14 }}>{err.pass}</div>}
+
+        <button className="btn-primary" style={{ width:"100%", marginBottom:14 }} onClick={submit}>
+          {mode === "signin" ? "Sign In" : "Create Account"}
+        </button>
+        <div style={{ textAlign:"center", fontSize:13, color:"#6B9490" }}>
+          {mode === "signin" ? "Don't have an account? " : "Already have an account? "}
+          <span style={{ color:B.secondary, fontWeight:700, cursor:"pointer" }}
+            onClick={() => setMode(mode === "signin" ? "signup" : "signin")}>
+            {mode === "signin" ? "Sign Up" : "Sign In"}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─── Chat Widget ───────────────────────────────────────────────────── */
+function ChatWidget({ show, onToggle }) {
+  const [msgs, setMsgs] = useState([
+    { from:"bot", text:"👋 Hi! I'm Dr. Mankgele's dental assistant. How can I help you today?" }
+  ]);
+  const [inp, setInp] = useState("");
+  const endRef = useRef(null);
+
+  useEffect(() => {
+    if (endRef.current) endRef.current.scrollIntoView({ behavior:"smooth" });
+  }, [msgs, show]);
+
+  const send = txt => {
+    if (!txt.trim()) return;
+    setMsgs(m => [...m, { from:"user", text:txt }]);
+    setInp("");
+    setTimeout(() => {
+      const lower = txt.toLowerCase();
+      const faq   = FAQS.find(f =>
+        f.q.toLowerCase().split(" ").some(w => w.length > 3 && lower.includes(w))
+      );
+      const reply = faq
+        ? faq.a
+        : "I'm not sure about that — please call us on 076 405 8326 or email lethabomankgele@gmail.com for assistance!";
+      setMsgs(m => [...m, { from:"bot", text:reply }]);
+    }, 700);
+  };
+
+  return (
+    <>
+      {/* FAB */}
+      <button onClick={onToggle}
+        style={{ position:"fixed", bottom:86, right:16, width:50, height:50,
+          borderRadius:"50%", background:`linear-gradient(135deg,${B.primary},${B.teal})`,
+          border:"none", cursor:"pointer",
+          boxShadow:"0 4px 18px rgba(13,92,78,.45)",
+          zIndex:200, fontSize:22, display:"flex",
+          alignItems:"center", justifyContent:"center", color:"#fff" }}>
+        {show ? "✕" : "💬"}
+        {!show && (
+          <div className="pulse" style={{ position:"absolute", top:4, right:4,
+            width:12, height:12, borderRadius:"50%",
+            background:"#E74C3C", border:"2px solid #fff" }} />
+        )}
+      </button>
+
+      {show && (
+        <div className="card slide"
+          style={{ position:"fixed", bottom:148, right:14,
+            width:300, maxWidth:"calc(100vw - 28px)",
+            display:"flex", flexDirection:"column", maxHeight:400, zIndex:200 }}>
+          {/* header */}
+          <div style={{ background:`linear-gradient(135deg,${B.primary},${B.secondary})`,
+            borderRadius:"16px 16px 0 0", padding:"12px 14px",
+            display:"flex", alignItems:"center", gap:10 }}>
+            <div style={{ width:34, height:34, borderRadius:"50%",
+              background:"rgba(255,255,255,.2)", display:"flex",
+              alignItems:"center", justifyContent:"center", fontSize:18 }}>🦷</div>
+            <div>
+              <div style={{ color:"#fff", fontWeight:700, fontSize:13 }}>Dental Assistant</div>
+              <div style={{ color:"rgba(255,255,255,.7)", fontSize:10 }}>● Online · Dr. Mankgele Practice</div>
+            </div>
+          </div>
+
+          {/* quick chips */}
+          <div style={{ padding:"8px 10px 0", display:"flex", gap:6, flexWrap:"wrap" }}>
+            {["Hours?","Location?","Specials?","Book?","Pain?"].map(q => (
+              <button key={q} onClick={() => send(q)}
+                style={{ background:B.light, color:B.primary, border:"none",
+                  borderRadius:50, padding:"3px 10px", fontSize:10, fontWeight:700, cursor:"pointer" }}>{q}</button>
+            ))}
+          </div>
+
+          {/* messages */}
+          <div style={{ flex:1, overflowY:"auto", padding:"10px 12px",
+            display:"flex", flexDirection:"column", gap:8, minHeight:140 }}>
+            {msgs.map((m, i) => (
+              <div key={i} style={{ display:"flex", justifyContent: m.from==="user" ? "flex-end" : "flex-start" }}>
+                <div style={{ maxWidth:"82%", padding:"9px 12px",
+                  borderRadius: m.from==="user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
+                  background: m.from==="user" ? B.primary : "#F0FAF8",
+                  color: m.from==="user" ? "#fff" : B.dark,
+                  fontSize:12, lineHeight:1.5 }}>{m.text}</div>
+              </div>
+            ))}
+            <div ref={endRef} />
+          </div>
+
+          {/* input */}
+          <div style={{ padding:"8px 10px", borderTop:"1px solid #F0FAF8",
+            display:"flex", gap:6 }}>
+            <input value={inp} onChange={e => setInp(e.target.value)}
+              onKeyDown={e => e.key === "Enter" && send(inp)}
+              placeholder="Ask anything..."
+              style={{ flex:1, padding:"7px 12px", borderRadius:50,
+                border:"2px solid #E4F5F2", fontSize:12, outline:"none" }} />
+            <button onClick={() => send(inp)}
+              style={{ width:32, height:32, borderRadius:"50%",
+                background:B.teal, border:"none", color:"#fff",
+                cursor:"pointer", fontSize:16, display:"flex",
+                alignItems:"center", justifyContent:"center" }}>→</button>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ─── Mount ──────────────────────────────────────────────────────────── */
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
+</body>
+</html>
