@@ -354,14 +354,14 @@ function HomePage({ setPage, doBook }) {
           Patient Stories
         </div>
         {[
-          { n:"Thabo M.",    t:"Dr. Mankgele is amazing — my extraction was completely painless. Very professional!", s:5 },
+          { n:"Tanaka B.",    t:"Dr. Mankgele is amazing — my extraction was completely painless. Very professional!", s:5 },
           { n:"Precious N.", t:"The family cleaning deal is incredible value. My kids actually enjoyed coming to the dentist!", s:5 },
           { n:"Lindiwe S.",  t:"I love my new veneers! The whole experience was smooth and the results are stunning.", s:5 },
         ].map((r, i) => (
           <div key={i} className="card" style={{ padding:14, marginBottom:10 }}>
             <div style={{ display:"flex", gap:10, alignItems:"center", marginBottom:8 }}>
               <div style={{ width:38, height:38, borderRadius:"50%",
-                background:`linear-gradient(135deg,${B.teal},${B.secondary})`,
+            ackground:`linear-gradient(135deg,${B.teal},${B.secondary})`,
                 display:"flex", alignItems:"center", justifyContent:"center",
                 color:"#fff", fontWeight:700, fontSize:15 }}>{r.n[0]}</div>
               <div>
