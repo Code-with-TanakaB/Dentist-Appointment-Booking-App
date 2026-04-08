@@ -13,9 +13,35 @@
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; background: #F7FCFB; font-family: 'DM Sans', system-ui, sans-serif; }
+    :root {
+      --ui-scale: 1;
+      --app-max-width: 1200px;
+    }
+    html, body { height: 100%; background: #F7FCFB; font-family: 'DM Sans', system-ui, sans-serif; overflow-x: hidden; }
     body { display: flex; justify-content: center; }
-    #root { width: 100%; max-width: 1200px; min-height: 100vh; background: #fff; position: relative; }
+    #root {
+      width: min(100%, var(--app-max-width));
+      min-height: calc(100vh / var(--ui-scale));
+      background: #fff;
+      position: relative;
+      transform: scale(var(--ui-scale));
+      transform-origin: top center;
+      margin: 0 auto;
+    }
+    /* Increase visual density on large screens while keeping mobile layout intact. */
+    @media (min-width: 1536px) {
+      :root {
+        --ui-scale: 1.15;
+        --app-max-width: 1320px;
+      }
+      body { padding: 16px 0 28px; }
+    }
+    @media (min-width: 1920px) {
+      :root {
+        --ui-scale: 1.25;
+        --app-max-width: 1440px;
+      }
+    }
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: #E4F5F2; }
     ::-webkit-scrollbar-thumb { background: #2ABFAB; border-radius: 3px; }
@@ -112,6 +138,7 @@ function App() {
   const [user,    setUser]    = useState(null);
   const [showAuth,setShowAuth]= useState(false);
   const [authMode,setAuthMode]= useState("signin");
+  const [showSessionModal, setShowSessionModal] = useState(false);
   const [appts,   setAppts]   = useState([
     { id:1, service:"Professional Cleaning", date:"2026-05-10", time:"09:00", status:"confirmed", ref:"MNK-042" }
   ]);
@@ -151,6 +178,11 @@ function App() {
     { id:"profile",      label:"About",    e:"👨‍⚕️" },
     { id:"find",         label:"Find Us",  e:"📍" },
   ];
+
+  useEffect(() => {
+    const modalTimer = setTimeout(() => setShowSessionModal(true), 10000);
+    return () => clearTimeout(modalTimer);
+  }, []);
 
   return (
     <>
@@ -197,7 +229,7 @@ function App() {
       </div>
 
       {/* ── Pages ── */}
-      <div className="fade" key={page} style={{ paddingBottom:76, minHeight:"calc(100vh - 57px)" }}>
+      <div className="fade" key={page} style={{ minHeight:"calc(100vh - 57px)" }}>
         {page === "home"         && <HomePage         setPage={setPage} doBook={doBook} />}
         {page === "services"     && <ServicesPage     doBook={doBook} />}
         {page === "book"         && <BookPage         step={bStep} setStep={setBStep} booking={booking} setBooking={setBooking} onConfirm={confirmBook} user={user} />}
@@ -207,8 +239,8 @@ function App() {
       </div>
 
       {/* ── Bottom Nav ── */}
-      <div style={{ position:"fixed", bottom:0, left:"50%", transform:"translateX(-50%)",
-        width:"100%", maxWidth:1200, background:"#fff",
+      <div style={{ position:"relative",
+        width:"100%", background:"#fff",
         borderTop:"1px solid #E4F5F2", display:"flex", zIndex:100,
         boxShadow:"0 -2px 14px rgba(0,0,0,.07)" }}>
         {NAV.map(n => (
@@ -230,6 +262,30 @@ function App() {
           onAuth={u => { setUser(u); setShowAuth(false); showT(`Welcome, ${u.name.split(" ")[0]}! 👋`); }} />
       )}
 
+      {/* ── Session Modal (10s) ── */}
+      {showSessionModal && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,.45)",
+          zIndex:550, display:"flex", alignItems:"center", justifyContent:"center", padding:16 }}>
+          <div className="card slide" style={{ width:"100%", maxWidth:420, padding:"22px 20px" }}>
+            <div style={{ fontSize:34, marginBottom:10, textAlign:"center" }}>🦷</div>
+            <div style={{ fontFamily:"'Playfair Display',serif", fontSize:22, color:B.dark, fontWeight:700, textAlign:"center", marginBottom:8 }}>
+              Need Help Booking?
+            </div>
+            <p style={{ fontSize:13, color:"#4A6B66", lineHeight:1.65, textAlign:"center", marginBottom:16 }}>
+              Pick a service and secure your appointment in under 2 minutes.
+            </p>
+            <div style={{ display:"flex", gap:10 }}>
+              <button className="btn-outline" style={{ flex:1 }}
+                onClick={() => setShowSessionModal(false)}>Maybe Later</button>
+              <button className="btn-primary" style={{ flex:1 }}
+                onClick={() => { setShowSessionModal(false); doBook(null); }}>
+                Book Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Chatbot ── */}
       <ChatWidget show={showChat} onToggle={() => setShowChat(p => !p)} />
     </>
@@ -243,7 +299,7 @@ function HomePage({ setPage, doBook }) {
       {/* Hero */}
       <div style={{
         backgroundImage:"linear-gradient(rgba(8,47,40,.58), rgba(8,47,40,.52)), url('smile.jpg')",
-        backgroundPosition:"center",
+        backgroundPosition:"center", 
         backgroundSize:"cover",
         padding:"32px 20px 44px", position:"relative", overflow:"hidden"
       }}>
@@ -916,11 +972,54 @@ function ChatWidget({ show, onToggle }) {
     { from:"bot", text:"👋 Hi! I'm Dr. Mankgele's dental assistant. How can I help you today?" }
   ]);
   const [inp, setInp] = useState("");
+  const [fabTop, setFabTop] = useState(120);
+  const [showPrompt, setShowPrompt] = useState(false);
   const endRef = useRef(null);
 
   useEffect(() => {
     if (endRef.current) endRef.current.scrollIntoView({ behavior:"smooth" });
   }, [msgs, show]);
+
+  useEffect(() => {
+    const placeChat = () => {
+      const rootEl = document.getElementById("root");
+      if (!rootEl) return;
+
+      const rootRect = rootEl.getBoundingClientRect();
+      const rootTopInDoc = window.scrollY + rootRect.top;
+      const nextTop = window.scrollY - rootTopInDoc + window.innerHeight - 74;
+      const minTop = 70;
+      const maxTop = Math.max(minTop, rootEl.scrollHeight - 66);
+      setFabTop(Math.min(maxTop, Math.max(minTop, nextTop)));
+    };
+
+    placeChat();
+    window.addEventListener("scroll", placeChat, { passive: true });
+    window.addEventListener("resize", placeChat);
+    return () => {
+      window.removeEventListener("scroll", placeChat);
+      window.removeEventListener("resize", placeChat);
+    };
+  }, []);
+
+  useEffect(() => {
+    const promptTimer = setTimeout(() => {
+      const promptText = "Hey, you can ask me anything";
+      setMsgs(m => m.some(msg => msg.text === promptText) ? m : [...m, { from:"bot", text:promptText }]);
+      setShowPrompt(true);
+    }, 20000);
+    return () => clearTimeout(promptTimer);
+  }, []);
+
+  useEffect(() => {
+    if (!showPrompt || show) return;
+    const hideTimer = setTimeout(() => setShowPrompt(false), 6000);
+    return () => clearTimeout(hideTimer);
+  }, [showPrompt, show]);
+
+  useEffect(() => {
+    if (show) setShowPrompt(false);
+  }, [show]);
 
   const send = txt => {
     if (!txt.trim()) return;
@@ -940,9 +1039,19 @@ function ChatWidget({ show, onToggle }) {
 
   return (
     <>
+      {!show && showPrompt && (
+        <div className="fade" style={{ position:"absolute", top:Math.max(12, fabTop - 42), right:72,
+          background:"#fff", color:B.dark, borderRadius:12, padding:"9px 12px",
+          fontSize:12, fontWeight:700, boxShadow:"0 8px 20px rgba(0,0,0,.14)",
+          border:"1px solid #E4F5F2", zIndex:210, cursor:"pointer" }}
+          onClick={onToggle}>
+          Hey, you can ask me anything
+        </div>
+      )}
+
       {/* FAB */}
       <button onClick={onToggle}
-        style={{ position:"fixed", bottom:86, right:16, width:50, height:50,
+        style={{ position:"absolute", top:fabTop, right:16, width:50, height:50,
           borderRadius:"50%", background:`linear-gradient(135deg,${B.primary},${B.teal})`,
           border:"none", cursor:"pointer",
           boxShadow:"0 4px 18px rgba(13,92,78,.45)",
@@ -958,7 +1067,7 @@ function ChatWidget({ show, onToggle }) {
 
       {show && (
         <div className="card slide"
-          style={{ position:"fixed", bottom:148, right:14,
+          style={{ position:"absolute", top:Math.max(16, fabTop - 312), right:14,
             width:300, maxWidth:"calc(100vw - 28px)",
             display:"flex", flexDirection:"column", maxHeight:400, zIndex:200 }}>
           {/* header */}
