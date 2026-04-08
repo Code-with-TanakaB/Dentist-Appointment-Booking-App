@@ -1,8 +1,8 @@
 # Dentist Booking App
 ## One-Page Proposal (Client Version)
 
-Prepared for: [Client Name]  
-Prepared by: [Your Name / Business]  
+Prepared for: Dr. LM. Mankgele  
+Prepared by: WebGemini by Tanaka Bvekerwa  
 Date: 08 April 2026
 
 ---
@@ -74,6 +74,6 @@ This system reduces booking friction, improves patient conversion, and gives the
 ---
 
 ## Approval
-Client Name: __________________________  
+Client Name: Dr. LM. Mankgele  
 Signature: _____________________________  
 Date: _________________________________

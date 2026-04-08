@@ -108,10 +108,10 @@ Any work outside this scope is documented as a change request including:
 ---
 
 ## Sign-Off
-Client Representative: __________________  
+Client Representative: Dr. LM. Mankgele  
 Signature: _____________________________  
 Date: _________________________________  
 
-Service Provider: ______________________  
+Service Provider: WebGemini by Tanaka Bvekerwa  
 Signature: _____________________________  
 Date: _________________________________

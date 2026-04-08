@@ -4,8 +4,8 @@
 Quote No: [QUOTE-2026-001]  
 Issue Date: [DD Month YYYY]  
 Valid Until: [DD Month YYYY]  
-Prepared For: [Client Name]  
-Prepared By: [Your Name / Business]  
+Prepared For: Dr. LM. Mankgele  
+Prepared By: WebGemini by Tanaka Bvekerwa  
 Currency: ZAR (R)
 
 ---
@@ -65,10 +65,10 @@ Estimated total duration: 2 to 4 weeks from kickoff and receipt of required asse
 ---
 
 ## Acceptance
-Client Name: __________________________  
+Client Name: Dr. LM. Mankgele  
 Signature: _____________________________  
 Date: _________________________________  
 
-Service Provider: ______________________  
+Service Provider: WebGemini by Tanaka Bvekerwa  
 Signature: _____________________________  
 Date: _________________________________
