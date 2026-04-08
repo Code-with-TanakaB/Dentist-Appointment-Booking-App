@@ -19,8 +19,16 @@
     }
     html, body { height: 100%; background: #F7FCFB; font-family: 'DM Sans', system-ui, sans-serif; overflow-x: hidden; }
     body { display: flex; justify-content: center; }
-    #root {
+    .main-container {
       width: min(100%, var(--app-max-width));
+      margin: 0 auto;
+      position: relative;
+      min-height: 100vh;
+      background: #fff;
+      box-shadow: 0 0 50px rgba(0,0,0,.05);
+    }
+    #root {
+      width: 100%;
       min-height: calc(100vh / var(--ui-scale));
       background: #fff;
       position: relative;
@@ -49,7 +57,9 @@
   </style>
 </head>
 <body>
-<div id="root"></div>
+<div class="main-container">
+  <div id="root"></div>
+</div>
 
 <script type="text/babel">
 const { useState, useEffect, useRef } = React;
@@ -100,6 +110,73 @@ const FAQS = [
   { q:"What are your contact details?",     a:"Phone: 076 405 8326 | 063 521 2593. Email: lethabomankgele@gmail.com" },
 ];
 
+const HERO_SLIDES = [
+  {
+    id: 1,
+    eyebrow: "MOKOPANE · LIMPOPO",
+    title: "Your Healthy Smile\nStarts Here",
+    body: "Professional dental care by Dr. LM Mankgele BDS (SMU) with modern treatment and compassionate service.",
+    image: "images/smile.jpg",
+    badgeTitle: "HPCSA Registered",
+    badgeText: "Practice No: 0955663 · HPCSA No: DP0114790",
+    primaryLabel: "Book Now",
+    secondaryLabel: "Services",
+  },
+  {
+    id: 2,
+    eyebrow: "SMILE TRANSFORMATIONS",
+    title: "Cosmetic Dentistry\nThat Feels Natural",
+    body: "From veneers to whitening, we design confident smiles that still look uniquely you.",
+    image: "images/teeth1.jpg",
+    badgeTitle: "Personalised Plans",
+    badgeText: "Tailored treatments for every smile goal",
+    primaryLabel: "View Services",
+    secondaryLabel: "Book Consult",
+  },
+  {
+    id: 3,
+    eyebrow: "FAMILY-FRIENDLY CARE",
+    title: "Gentle Visits\nFor Every Age",
+    body: "Comfort-first appointments for children, teens, and adults in a welcoming environment.",
+    image: "images/dental_practice.jpg",
+    badgeTitle: "Trusted Local Practice",
+    badgeText: "Serving families across Mokopane",
+    primaryLabel: "Call Practice",
+    secondaryLabel: "Book Visit",
+  },
+];
+
+const REVIEWS = [
+  {
+    id: 1,
+    name: "Tanaka B.",
+    review: "Dr. Mankgele is amazing, my extraction was completely painless. Very professional and calm throughout.",
+    stars: 5,
+    service: "Extraction",
+  },
+  {
+    id: 2,
+    name: "Precious N.",
+    review: "The family cleaning deal is incredible value. My kids actually enjoyed coming to the dentist.",
+    stars: 5,
+    service: "Family Cleaning",
+  },
+  {
+    id: 3,
+    name: "Lindiwe S.",
+    review: "I love my new veneers. The whole experience was smooth and the results are stunning.",
+    stars: 5,
+    service: "Veneers",
+  },
+  {
+    id: 4,
+    name: "Kagiso M.",
+    review: "Booked online in less than 2 minutes and the appointment was exactly on time. Excellent service.",
+    stars: 5,
+    service: "Consultation",
+  },
+];
+
 /* ─── Global CSS injected once ──────────────────────────────────────── */
 const GLOBAL_CSS = `
   .btn-primary {
@@ -130,6 +207,37 @@ const GLOBAL_CSS = `
   input:focus, select:focus, textarea:focus { outline: 2px solid #2ABFAB !important; }
   .pulse { animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.5;} }
+  .slider-control {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.35);
+    background: rgba(8,47,40,.35);
+    color: #fff; font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    backdrop-filter: blur(4px);
+    transition: transform .2s ease, background .2s ease;
+  }
+  .slider-control:hover { transform: translateY(-1px); background: rgba(8,47,40,.55); }
+  .hero-nav-controls {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    display: flex;
+    gap: 6px;
+  }
+  @media (max-width: 768px) {
+    .hero-nav-mobile-hidden {
+      display: none !important;
+    }
+  }
+  .dot-btn {
+    width: 7px; height: 7px; border-radius: 50%; border: none;
+    background: rgba(255,255,255,.5); cursor: pointer;
+    padding: 0; transition: all .2s ease;
+  }
+  .dot-btn.active {
+    width: 20px; border-radius: 999px;
+    background: #fff;
+  }
 `;
 
 /* ─── Root App ──────────────────────────────────────────────────────── */
@@ -239,7 +347,7 @@ function App() {
       </div>
 
       {/* ── Bottom Nav ── */}
-      <div style={{ position:"relative",
+      <div id="app-footer" style={{ position:"relative",
         width:"100%", background:"#fff",
         borderTop:"1px solid #E4F5F2", display:"flex", zIndex:100,
         boxShadow:"0 -2px 14px rgba(0,0,0,.07)" }}>
@@ -292,45 +400,281 @@ function App() {
   );
 }
 
+/* ─── Slider Helpers ────────────────────────────────────────────────── */
+function useSlider(length, autoMs = 5500) {
+  const [index, setIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+
+  const next = () => setIndex(i => (i + 1) % length);
+  const prev = () => setIndex(i => (i - 1 + length) % length);
+  const goTo = i => setIndex(i);
+
+  useEffect(() => {
+    if (isPaused || length <= 1) return;
+    const t = setInterval(next, autoMs);
+    return () => clearInterval(t);
+  }, [isPaused, length, autoMs]);
+
+  const onTouchStart = e => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const onTouchMove = e => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const onTouchEnd = () => {
+    const delta = touchStartX.current - touchEndX.current;
+    if (Math.abs(delta) < 40) return;
+    if (delta > 0) next();
+    else prev();
+  };
+
+  return { index, next, prev, goTo, setIsPaused, onTouchStart, onTouchMove, onTouchEnd };
+}
+
+function HeroSlider({ setPage, doBook }) {
+  const { index, next, prev, goTo, setIsPaused, onTouchStart, onTouchMove, onTouchEnd } = useSlider(HERO_SLIDES.length, 5200);
+
+  return (
+    <div
+      style={{ padding:"12px 14px 0" }}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
+      <div style={{
+        borderRadius:24,
+        overflow:"hidden",
+        position:"relative",
+        boxShadow:"0 18px 45px rgba(8,47,40,.22)",
+      }}>
+        <div style={{
+          display:"flex",
+          width:`${HERO_SLIDES.length * 100}%`,
+          transform:`translateX(-${index * (100 / HERO_SLIDES.length)}%)`,
+          transition:"transform .7s cubic-bezier(.22,1,.36,1)",
+        }}>
+          {HERO_SLIDES.map(slide => (
+            <div key={slide.id} style={{
+              width:`${100 / HERO_SLIDES.length}%`,
+              backgroundImage:`linear-gradient(120deg, rgba(8,47,40,.78), rgba(13,92,78,.56)), url('${slide.image}')`,
+              backgroundPosition:"center",
+              backgroundSize:"cover",
+              padding:"30px 18px 34px",
+              minHeight:320,
+              position:"relative",
+            }}>
+              <div style={{ fontSize:10, color:"rgba(255,255,255,.92)", marginBottom:8, letterSpacing:1.8, fontWeight:700 }}>
+                {slide.eyebrow}
+              </div>
+              <h1 style={{
+                fontFamily:"'Playfair Display',serif",
+                fontSize:30,
+                color:"#F8FFFD",
+                fontWeight:700,
+                lineHeight:1.2,
+                marginBottom:10,
+                whiteSpace:"pre-line",
+              }}>
+                {slide.title}
+              </h1>
+              <p style={{ color:"rgba(248,255,253,.92)", fontSize:13, lineHeight:1.7, marginBottom:20, maxWidth:290 }}>
+                {slide.body}
+              </p>
+              <div style={{ display:"flex", gap:10, marginBottom:20 }}>
+                <button
+                  className="btn-primary"
+                  style={{ background:"#F8FFFD", color:B.dark, boxShadow:"0 6px 16px rgba(0,0,0,.2)" }}
+                  onClick={() => {
+                    if (slide.primaryLabel.includes("Service")) setPage("services");
+                    else if (slide.primaryLabel.includes("Call")) window.location.href = "tel:0764058326";
+                    else doBook(null);
+                  }}
+                >
+                  {slide.primaryLabel}
+                </button>
+                <button
+                  onClick={() => {
+                    if (slide.secondaryLabel.includes("Service")) setPage("services");
+                    else doBook(null);
+                  }}
+                  style={{
+                    background:"rgba(248,255,253,.18)",
+                    border:"2px solid rgba(248,255,253,.65)",
+                    color:"#F8FFFD",
+                    borderRadius:50,
+                    padding:"9px 18px",
+                    fontSize:13,
+                    fontWeight:700,
+                    cursor:"pointer",
+                  }}
+                >
+                  {slide.secondaryLabel}
+                </button>
+              </div>
+              <div style={{ background:"rgba(8,47,40,.42)", borderRadius:14, padding:"10px 14px", display:"flex", alignItems:"center", gap:12 }}>
+                <span style={{ fontSize:22 }}>🏅</span>
+                <div>
+                  <div style={{ color:"#F8FFFD", fontWeight:700, fontSize:12 }}>{slide.badgeTitle}</div>
+                  <div style={{ color:"rgba(248,255,253,.82)", fontSize:11 }}>{slide.badgeText}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className={index === 0 ? "hero-nav-controls hero-nav-mobile-hidden" : "hero-nav-controls"}>
+          <button className="slider-control" onClick={prev} aria-label="Previous slide">‹</button>
+          <button className="slider-control" onClick={next} aria-label="Next slide">›</button>
+        </div>
+
+        <div style={{ position:"absolute", left:14, bottom:16, display:"flex", gap:6 }}>
+          {HERO_SLIDES.map((s, i) => (
+            <button
+              key={s.id}
+              className={`dot-btn ${index === i ? "active" : ""}`}
+              onClick={() => goTo(i)}
+              aria-label={`Go to slide ${i + 1}`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReviewsSlider() {
+  const { index, next, prev, goTo, setIsPaused, onTouchStart, onTouchMove, onTouchEnd } = useSlider(REVIEWS.length, 4800);
+
+  return (
+    <div
+      style={{ padding:"10px 14px 14px" }}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:12 }}>
+        <div style={{ fontFamily:"'Playfair Display',serif", fontSize:18, color:B.dark, fontWeight:700 }}>
+          Patient Stories
+        </div>
+        <div style={{ display:"flex", gap:6 }}>
+          <button
+            onClick={prev}
+            aria-label="Previous review"
+            style={{
+              width:30,
+              height:30,
+              borderRadius:"50%",
+              border:`1px solid ${B.light}`,
+              background:"#fff",
+              color:B.primary,
+              cursor:"pointer",
+              fontWeight:700,
+            }}
+          >
+            ‹
+          </button>
+          <button
+            onClick={next}
+            aria-label="Next review"
+            style={{
+              width:30,
+              height:30,
+              borderRadius:"50%",
+              border:`1px solid ${B.light}`,
+              background:"#fff",
+              color:B.primary,
+              cursor:"pointer",
+              fontWeight:700,
+            }}
+          >
+            ›
+          </button>
+        </div>
+      </div>
+
+      <div style={{ overflow:"hidden", borderRadius:16 }}>
+        <div style={{
+          display:"flex",
+          width:`${REVIEWS.length * 100}%`,
+          transform:`translateX(-${index * (100 / REVIEWS.length)}%)`,
+          transition:"transform .6s cubic-bezier(.22,1,.36,1)",
+        }}>
+          {REVIEWS.map(r => (
+            <div key={r.id} style={{ width:`${100 / REVIEWS.length}%`, paddingRight:2 }}>
+              <div className="card" style={{
+                padding:16,
+                marginBottom:2,
+                background:"linear-gradient(170deg, #FFFFFF 0%, #F6FBFA 100%)",
+                border:"1px solid #E4F5F2",
+              }}>
+                <div style={{ display:"flex", gap:10, alignItems:"center", marginBottom:8 }}>
+                  <div style={{
+                    width:40,
+                    height:40,
+                    borderRadius:"50%",
+                    background:`linear-gradient(135deg,${B.teal},${B.secondary})`,
+                    display:"flex",
+                    alignItems:"center",
+                    justifyContent:"center",
+                    color:"#fff",
+                    fontWeight:700,
+                    fontSize:15,
+                  }}>
+                    {r.name[0]}
+                  </div>
+                  <div>
+                    <div style={{ fontWeight:700, fontSize:13, color:B.dark }}>{r.name}</div>
+                    <div style={{ color:"#F5A623", fontSize:13, letterSpacing:1 }}>{"★".repeat(r.stars)}</div>
+                  </div>
+                </div>
+                <p style={{ fontSize:13, color:"#4A6B66", lineHeight:1.6, margin:"0 0 8px" }}>
+                  "{r.review}"
+                </p>
+                <span style={{
+                  display:"inline-block",
+                  background:B.light,
+                  color:B.primary,
+                  borderRadius:999,
+                  padding:"4px 10px",
+                  fontSize:10,
+                  fontWeight:700,
+                }}>
+                  {r.service}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ display:"flex", justifyContent:"center", gap:6, marginTop:8 }}>
+        {REVIEWS.map((r, i) => (
+          <button
+            key={r.id}
+            className={`dot-btn ${index === i ? "active" : ""}`}
+            style={index === i ? {} : { background:"rgba(13,92,78,.35)" }}
+            onClick={() => goTo(i)}
+            aria-label={`Go to review ${i + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Home ──────────────────────────────────────────────────────────── */
 function HomePage({ setPage, doBook }) {
   return (
     <div>
-      {/* Hero */}
-      <div style={{
-        backgroundImage:"linear-gradient(rgba(8,47,40,.58), rgba(8,47,40,.52)), url('images/smile.jpg')",
-        backgroundPosition:"center", 
-        backgroundSize:"cover",
-        padding:"32px 20px 44px", position:"relative", overflow:"hidden"
-      }}>
-        <div style={{ fontSize:11, color:"rgba(255,255,255,.9)", marginBottom:6,
-          letterSpacing:2, fontWeight:700 }}>MOKOPANE · LIMPOPO</div>
-        <h1 style={{ fontFamily:"'Playfair Display',serif", fontSize:28, color:"#F8FFFD",
-          fontWeight:700, lineHeight:1.25, marginBottom:10 }}>
-          Your Healthy Smile<br/>Starts Here
-        </h1>
-        <p style={{ color:"rgba(248,255,253,.9)", fontSize:13, lineHeight:1.7,
-          marginBottom:22, maxWidth:270 }}>
-          Professional dental care by <strong>Dr. LM Mankgele</strong> BDS (SMU) — serving
-          Mokopane with compassion and expertise.
-        </p>
-        <div style={{ display:"flex", gap:10, marginBottom:24 }}>
-          <button className="btn-primary" style={{ background:"#F8FFFD", color:B.dark, boxShadow:"0 6px 16px rgba(0,0,0,.2)" }}
-            onClick={() => doBook(null)}>Book Now</button>
-          <button onClick={() => setPage("services")}
-            style={{ background:"rgba(248,255,253,.2)", border:"2px solid rgba(248,255,253,.65)",
-              color:"#F8FFFD", borderRadius:50, padding:"9px 18px",
-              fontSize:13, fontWeight:700, cursor:"pointer" }}>Services</button>
-        </div>
-        <div style={{ background:"rgba(8,47,40,.45)", borderRadius:14,
-          padding:"10px 14px", display:"flex", alignItems:"center", gap:12 }}>
-          <span style={{ fontSize:24 }}>🏅</span>
-          <div>
-            <div style={{ color:"#F8FFFD", fontWeight:700, fontSize:12 }}>HPCSA Registered</div>
-            <div style={{ color:"rgba(248,255,253,.82)", fontSize:11 }}>Practice No: 0955663 · HPCSA No: DP0114790</div>
-          </div>
-        </div>
-      </div>
+      <HeroSlider setPage={setPage} doBook={doBook} />
 
       {/* Stats strip */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:1, background:"#E4F5F2" }}>
@@ -404,31 +748,7 @@ function HomePage({ setPage, doBook }) {
         </div>
       </div>
 
-      {/* Testimonials */}
-      <div style={{ padding:"10px 14px 14px" }}>
-        <div style={{ fontFamily:"'Playfair Display',serif", fontSize:18, color:B.dark, fontWeight:700, marginBottom:12 }}>
-          Patient Stories
-        </div>
-        {[
-          { n:"Tanaka B.",    t:"Dr. Mankgele is amazing — my extraction was completely painless. Very professional!", s:5 },
-          { n:"Precious N.", t:"The family cleaning deal is incredible value. My kids actually enjoyed coming to the dentist!", s:5 },
-          { n:"Lindiwe S.",  t:"I love my new veneers! The whole experience was smooth and the results are stunning.", s:5 },
-        ].map((r, i) => (
-          <div key={i} className="card" style={{ padding:14, marginBottom:10 }}>
-            <div style={{ display:"flex", gap:10, alignItems:"center", marginBottom:8 }}>
-              <div style={{ width:38, height:38, borderRadius:"50%",
-            ackground:`linear-gradient(135deg,${B.teal},${B.secondary})`,
-                display:"flex", alignItems:"center", justifyContent:"center",
-                color:"#fff", fontWeight:700, fontSize:15 }}>{r.n[0]}</div>
-              <div>
-                <div style={{ fontWeight:700, fontSize:13 }}>{r.n}</div>
-                <div style={{ color:"#F5A623", fontSize:13 }}>{"★".repeat(r.s)}</div>
-              </div>
-            </div>
-            <p style={{ fontSize:13, color:"#4A6B66", lineHeight:1.6, margin:0 }}>"{r.t}"</p>
-          </div>
-        ))}
-      </div>
+      <ReviewsSlider />
 
       {/* CTA */}
       <div style={{ margin:"0 14px 24px",
@@ -972,33 +1292,39 @@ function ChatWidget({ show, onToggle }) {
     { from:"bot", text:"👋 Hi! I'm Dr. Mankgele's dental assistant. How can I help you today?" }
   ]);
   const [inp, setInp] = useState("");
-  const [fabTop, setFabTop] = useState(120);
   const [showPrompt, setShowPrompt] = useState(false);
+  const [footerVisible, setFooterVisible] = useState(false);
+  const [footerHeight, setFooterHeight] = useState(64);
   const endRef = useRef(null);
+  const chatRight = "max(16px, calc((100vw - min(100vw, var(--app-max-width))) / 2 + 16px))";
+  const chatBottom = 16;
 
   useEffect(() => {
     if (endRef.current) endRef.current.scrollIntoView({ behavior:"smooth" });
   }, [msgs, show]);
 
   useEffect(() => {
-    const placeChat = () => {
-      const rootEl = document.getElementById("root");
-      if (!rootEl) return;
+    const footerEl = document.getElementById("app-footer");
+    if (!footerEl) return;
 
-      const rootRect = rootEl.getBoundingClientRect();
-      const rootTopInDoc = window.scrollY + rootRect.top;
-      const nextTop = window.scrollY - rootTopInDoc + window.innerHeight - 74;
-      const minTop = 70;
-      const maxTop = Math.max(minTop, rootEl.scrollHeight - 66);
-      setFabTop(Math.min(maxTop, Math.max(minTop, nextTop)));
+    const updateFooterMetrics = () => {
+      setFooterHeight(footerEl.getBoundingClientRect().height || 64);
     };
 
-    placeChat();
-    window.addEventListener("scroll", placeChat, { passive: true });
-    window.addEventListener("resize", placeChat);
+    updateFooterMetrics();
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setFooterVisible(entry.isIntersecting);
+        updateFooterMetrics();
+      },
+      { threshold: 0.08 }
+    );
+
+    observer.observe(footerEl);
+    window.addEventListener("resize", updateFooterMetrics);
     return () => {
-      window.removeEventListener("scroll", placeChat);
-      window.removeEventListener("resize", placeChat);
+      observer.disconnect();
+      window.removeEventListener("resize", updateFooterMetrics);
     };
   }, []);
 
@@ -1037,10 +1363,16 @@ function ChatWidget({ show, onToggle }) {
     }, 700);
   };
 
+  const isParked = footerVisible;
+  const parkingBottom = footerHeight + 14;
+  const chatPosition = isParked ? "absolute" : "fixed";
+  const chatRightValue = isParked ? 16 : chatRight;
+  const chatBaseBottom = isParked ? parkingBottom : chatBottom;
+
   return (
     <>
       {!show && showPrompt && (
-        <div className="fade" style={{ position:"absolute", top:Math.max(12, fabTop - 42), right:72,
+        <div className="fade" style={{ position:chatPosition, bottom:chatBaseBottom + 30, right:isParked ? 72 : `calc(${chatRight} + 56px)`,
           background:"#fff", color:B.dark, borderRadius:12, padding:"9px 12px",
           fontSize:12, fontWeight:700, boxShadow:"0 8px 20px rgba(0,0,0,.14)",
           border:"1px solid #E4F5F2", zIndex:210, cursor:"pointer" }}
@@ -1051,11 +1383,11 @@ function ChatWidget({ show, onToggle }) {
 
       {/* FAB */}
       <button onClick={onToggle}
-        style={{ position:"absolute", top:fabTop, right:16, width:50, height:50,
+        style={{ position:chatPosition, bottom:chatBaseBottom, right:chatRightValue, width:50, height:50,
           borderRadius:"50%", background:`linear-gradient(135deg,${B.primary},${B.teal})`,
           border:"none", cursor:"pointer",
           boxShadow:"0 4px 18px rgba(13,92,78,.45)",
-          zIndex:200, fontSize:22, display:"flex",
+          zIndex:1000, fontSize:22, display:"flex",
           alignItems:"center", justifyContent:"center", color:"#fff" }}>
         {show ? "✕" : "💬"}
         {!show && (
@@ -1067,9 +1399,9 @@ function ChatWidget({ show, onToggle }) {
 
       {show && (
         <div className="card slide"
-          style={{ position:"absolute", top:Math.max(16, fabTop - 312), right:14,
+          style={{ position:chatPosition, bottom:chatBaseBottom + 58, right:isParked ? 14 : "max(14px, calc((100vw - min(100vw, var(--app-max-width))) / 2 + 14px))",
             width:300, maxWidth:"calc(100vw - 28px)",
-            display:"flex", flexDirection:"column", maxHeight:400, zIndex:200 }}>
+            display:"flex", flexDirection:"column", maxHeight:400, zIndex:1000 }}>
           {/* header */}
           <div style={{ background:`linear-gradient(135deg,${B.primary},${B.secondary})`,
             borderRadius:"16px 16px 0 0", padding:"12px 14px",
