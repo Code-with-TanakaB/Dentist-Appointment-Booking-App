@@ -17,37 +17,31 @@ Design, build, secure, and deploy a production-ready dental appointment booking 
 
 | Item | Description | Amount (ZAR) |
 |---|---|---:|
-| Discovery and planning | Final requirements, architecture, delivery planning | R[ ] |
-| Frontend finalization | UX polish, responsive QA, conversion flow improvements | R[ ] |
-| Backend API development | Auth, booking, and profile endpoints | R[ ] |
-| PostgreSQL integration | Data model, migrations, connection, and testing | R[ ] |
-| Security implementation | Validation, password hashing, rate limiting, hardening | R[ ] |
-| Deployment and environment setup | Hosting, domain, SSL, env vars, production launch | R[ ] |
-| Handover and training | Admin walkthrough + launch support | R[ ] |
-| **Subtotal** |  | **R[ ]** |
-| **Discount (optional)** |  | **R[ ]** |
-| **Total Project Fee** |  | **R[ ]** |
+| Development, testing, and live production | End-to-end implementation and production release | R5,000 |
+| **Total Project Fee (Once-Off)** |  | **R5,000** |
 
 ## 3) Milestone Payment Schedule
 
 | Milestone | Deliverable | % | Amount (ZAR) |
 |---|---|---:|---:|
-| Milestone 1 | Kickoff + technical setup approved | 40% | R[ ] |
-| Milestone 2 | Core build complete (frontend + backend + DB) | 40% | R[ ] |
-| Milestone 3 | Final QA + production launch + handover | 20% | R[ ] |
-| **Total** |  | **100%** | **R[ ]** |
+| Milestone 1 | Kickoff and implementation start | 50% | R2,500 |
+| Milestone 2 | Testing, launch, and handover | 50% | R2,500 |
+| **Total** |  | **100%** | **R5,000** |
 
 Suggested terms:
 - Work starts after Milestone 1 payment clearance.
 - Each milestone is billed on acceptance of listed deliverables.
 
-## 4) Optional Monthly Support Retainer
+## 4) Monthly Support and Marketing Fees
 
 | Plan | Includes | Monthly Fee (ZAR) |
 |---|---|---:|
-| Essential | Bug fixes, backups check, minor content updates | R2,500-R3,500 |
-| Growth | Essential + feature tweaks + analytics review | R3,500-R5,500 |
-| Premium | Growth + faster SLA + priority changes | R5,500-R8,000 |
+| Maintenance | Bug fixes, checks, and routine upkeep | R1,000 |
+| Email + Social Media Marketing | Campaign support and monthly outreach | R1,000 |
+| **Total Monthly Retainer** | Maintenance + marketing support | **R2,000** |
+
+Value-first note:
+- Pricing is intentionally set to overdeliver value, build trust, and encourage long-term referrals.
 
 ## 5) Project Duration
 Estimated total duration: 2 to 4 weeks from kickoff and receipt of required assets/content.

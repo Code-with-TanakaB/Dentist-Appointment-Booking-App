@@ -60,13 +60,13 @@ Typical sequence:
 - Week 4: Final QA + deployment + handover.
 
 ## 7) Investment Summary (ZAR)
-Estimated once-off build fee:
-- MVP launch: R18,000-R30,000
-- Professional launch: R35,000-R60,000
+Final quote for this project:
+- Once-off development, testing, and live production: R5,000
+- Monthly maintenance fee: R1,000/month
+- Monthly email and social media marketing support: R1,000/month
 
-Recommended quote for this project:
-- R28,000-R42,000 once-off, plus
-- R3,500-R5,500 monthly support (optional)
+Value-first pricing note:
+- This pricing is intentionally set to deliver more value than cost, with a strong focus on long-term partnership and referral-based growth.
 
 ## 8) Business Outcome
 This system reduces booking friction, improves patient conversion, and gives the practice a credible digital booking channel that can operate 24/7.

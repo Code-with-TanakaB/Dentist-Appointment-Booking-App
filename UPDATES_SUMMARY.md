@@ -180,36 +180,24 @@ Typical expected monthly total:
 
 ---
 
-## 8. Pricing You Can Charge the Client (ZAR)
+## 8. Final Client Quote (ZAR)
 
-Recommended pricing tiers for this project:
+Approved pricing model:
 
-### Option A - MVP Launch Package
-- Price: R18,000-R30,000 once-off
-- Includes:
-	- Production-ready frontend refinements
-	- Backend API and PostgreSQL integration
-	- Secure sign-up/sign-in + password reset
-	- Basic deployment to hosting platforms
+### Once-off implementation fee
+- R5,000 once-off
+- Covers: development, testing, and live production deployment.
 
-### Option B - Professional Launch Package
-- Price: R35,000-R60,000 once-off
-- Includes everything in MVP, plus:
-	- Advanced security hardening
-	- Admin dashboard basics
-	- Email/SMS reminders
-	- Analytics and conversion tracking
-	- 30 days post-launch support
+### Recurring monthly fees
+- R1,000/month maintenance
+- R1,000/month email and social media marketing
 
-### Optional monthly support retainer
-- Price: R2,500-R8,000/month
-- Includes:
-	- Bug fixes and maintenance
-	- Content or service updates
-	- Performance/security monitoring
+### Total monthly retainer
+- R2,000/month
 
-Pricing recommendation for your current app stage:
-- Quote around R28,000-R42,000 for a full secure launch, then R3,500-R5,500/month support.
+Value-first strategy:
+- This quote is intentionally set below typical market rates so the client receives exceptional value.
+- The business objective is to overdeliver, build trust, and gain strong referral momentum.
 
 ---
 
